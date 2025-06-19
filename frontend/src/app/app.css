@@ -1,0 +1,7 @@
+/* Basic global styles, can expand later */
+:host {
+  display: block;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 0;
+  margin: 0;
+}

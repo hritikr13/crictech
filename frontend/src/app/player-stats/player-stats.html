@@ -1,0 +1,83 @@
+<div class="stats-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h3>Teams</h3>
+    <ul>
+      <li 
+        *ngFor="let team of teams" 
+        [class.active]="selectedTeam === team"
+        (click)="selectTeam(team)">
+        {{ team }}
+      </li>
+      <li 
+        [class.active]="!selectedTeam" 
+        (click)="selectTeam('')">
+        All Teams
+      </li>
+    </ul>
+
+    <h3>Seasons</h3>
+    <ul>
+      <li 
+        *ngFor="let year of seasons" 
+        [class.active]="selectedSeason === year"
+        (click)="selectSeason(year)">
+        {{ year }}
+      </li>
+      <li [class.active]="selectedSeason === null" (click)="selectSeason(null)">
+        All Seasons
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <section class="main-content">
+    <h2>Player Stats</h2>
+
+    <div class="filters-bar">
+      <button class="clear-button" (click)="clearFilters()">Clear Filters</button>
+    </div>
+
+
+    <table>
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Team</th>
+          <th (click)="toggleSort('season')" style="cursor: pointer;">
+            Season
+            <span *ngIf="sortField === 'season'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+          <th (click)="toggleSort('runs')" style="cursor: pointer;">
+            Runs 
+            <span *ngIf="sortField === 'runs'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+          <th (click)="toggleSort('wickets')" style="cursor: pointer;">
+            Wickets 
+            <span *ngIf="sortField === 'wickets'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+          <th>Strike Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let player of players">
+          <td>{{ player.player }}</td>
+          <td>{{ player.team }}</td>
+          <td>{{ player.season }}</td>
+          <td>{{ player.runs }}</td>
+          <td>{{ player.wickets }}</td>
+          <td>{{ player.strikeRate }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Charts -->
+    <app-player-charts [players]="players"></app-player-charts>
+  </section>
+</div>
