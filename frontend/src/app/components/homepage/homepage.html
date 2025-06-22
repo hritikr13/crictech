@@ -1,24 +1,40 @@
-<div class="homepage-container">
-  <div class="intro-section" *ngIf="!showSelection">
-    <h1>🏏 Hey there, I'm Hritik</h1>
-    <p>A passionate cricket enthusiast and a curious coder — where numbers meet the game!</p>
-    <p>Dive into cricket stats like never before. Click enter to begin your innings.</p>
-    <button class="enter-button" (click)="showSelection = true">Enter</button>
+<div class="homepage-wrapper">
+  <div class="hero" *ngIf="!showSelection" [ngStyle]="backgroundStyle">
+    <div class="overlay">
+      <h1 class="headline">Welcome to <span>CricTech Analytics</span></h1>
+      <p class="subtext">
+        Uncover player stats, team trends, and IPL history — all in one place.
+      </p>
+      <button class="cta-button" (click)="showSelection = true">
+        Get Started
+      </button>
+    </div>
   </div>
 
-  <div *ngIf="showSelection" class="selection-panel">
-    <h2>Select a Team & Season</h2>
+  <div *ngIf="showSelection" class="selection-wrapper">
+    <div class="selection-box">
+      <h2>Choose Your Preferences</h2>
+      <p>Filter stats by your favorite team and season</p>
 
-    <select [(ngModel)]="selectedTeam">
-      <option value="">-- Select Team --</option>
-      <option *ngFor="let team of teams">{{ team }}</option>
-    </select>
+      <div class="selectors">
+        <select [(ngModel)]="selectedTeam">
+          <option value="">-- Select Team --</option>
+          <option *ngFor="let team of teams">{{ team }}</option>
+        </select>
 
-    <select [(ngModel)]="selectedSeason">
-      <option value="">-- Select Season --</option>
-      <option *ngFor="let year of seasons">{{ year }}</option>
-    </select>
+        <select [(ngModel)]="selectedSeason">
+          <option value="">-- Select Season --</option>
+          <option *ngFor="let year of seasons">{{ year }}</option>
+        </select>
+      </div>
 
-    <button (click)="goToStats()">View Stats</button>
+      <button
+        class="cta-button"
+        [disabled]="!selectedTeam"
+        (click)="goToStats()"
+      >
+        View Stats
+      </button>
+    </div>
   </div>
 </div>

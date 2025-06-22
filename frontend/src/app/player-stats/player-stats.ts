@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlayerService, PlayerStats } from '../player';
 import { PlayerChartsComponent } from './player-charts';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-player-stats',
@@ -31,7 +31,7 @@ export class PlayerStatsComponent {
   seasons: number[] = Array.from(
     { length: 2025 - 2008 + 1 },
     (_, i) => 2008 + i
-  ); // [2008..2025]
+  );
 
   selectedTeam: string = '';
   selectedSeason: number | null = null;
@@ -39,7 +39,10 @@ export class PlayerStatsComponent {
   sortField: 'runs' | 'wickets' | 'season' | '' = '';
   sortDirection: 'asc' | 'desc' = 'desc';
 
+  searchText: string = '';
+
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private playerService = inject(PlayerService);
 
   ngOnInit(): void {
@@ -54,32 +57,46 @@ export class PlayerStatsComponent {
     });
   }
 
+  goHome() {
+    this.router.navigate(['/']);
+  }
+
   applyFilters() {
-  let filtered = [...this.allPlayers];
+    let filtered = [...this.allPlayers];
 
-  if (this.selectedTeam && this.selectedTeam.trim() !== '') {
-    filtered = filtered.filter(p => p.team === this.selectedTeam);
+    if (this.selectedTeam && this.selectedTeam.trim() !== '') {
+      filtered = filtered.filter((p) => p.team === this.selectedTeam);
+    }
+
+    if (this.selectedSeason !== null) {
+      filtered = filtered.filter((p) => p.season === this.selectedSeason);
+    }
+
+    if (this.searchText.trim()) {
+      const lowerSearch = this.searchText.trim().toLowerCase();
+      filtered = filtered.filter((p) =>
+        p.player.toLowerCase().includes(lowerSearch)
+      );
+    }
+
+    if (this.sortField) {
+      const field = this.sortField as keyof PlayerStats;
+      filtered = filtered.sort((a, b) => {
+        const valA = Number(a[field]);
+        const valB = Number(b[field]);
+        return this.sortDirection === 'asc' ? valA - valB : valB - valA;
+      });
+    }
+
+    this.players = filtered;
   }
 
-  if (this.selectedSeason !== null) {
-    filtered = filtered.filter(p => p.season === this.selectedSeason);
+  onSearchChange() {
+    this.applyFilters();
   }
-
-  if (this.sortField) {
-    const field = this.sortField as keyof PlayerStats;
-    filtered = filtered.sort((a, b) => {
-      const valA = Number(a[field]);
-      const valB = Number(b[field]);
-      return this.sortDirection === 'asc' ? valA - valB : valB - valA;
-    });
-  }
-
-  this.players = filtered;
-}
-
 
   selectTeam(team: string) {
-    this.selectedTeam = team.trim(); // sanitize
+    this.selectedTeam = team.trim();
     this.applyFilters();
   }
 
@@ -99,10 +116,11 @@ export class PlayerStatsComponent {
   }
 
   clearFilters() {
-  this.selectedTeam = '';
-  this.selectedSeason = null;
-  this.sortField = '';
-  this.sortDirection = 'desc';
-  this.applyFilters();
-}
+    this.selectedTeam = '';
+    this.selectedSeason = null;
+    this.sortField = '';
+    this.sortDirection = 'desc';
+    this.searchText = '';
+    this.applyFilters();
+  }
 }

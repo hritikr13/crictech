@@ -9,6 +9,7 @@ export interface PlayerStats {
   runs: number;
   wickets: number;
   strikeRate: number;
+  role: 'Batsman' | 'Bowler' | 'All-rounder'; // Make sure this field exists
 }
 
 @Injectable({ providedIn: 'root' })

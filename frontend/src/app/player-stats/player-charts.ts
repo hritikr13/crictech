@@ -1,6 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ChartType, ChartConfiguration } from 'chart.js';
+import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { NgChartsModule } from 'ng2-charts';
 import { PlayerStats } from '../player';
 
@@ -11,12 +11,41 @@ import { PlayerStats } from '../player';
   templateUrl: './player-charts.html',
   styleUrls: ['./player-charts.css']
 })
-export class PlayerChartsComponent {
+export class PlayerChartsComponent implements OnChanges {
   @Input() players: PlayerStats[] = [];
 
   topRunScorersChart: ChartConfiguration<'bar'>['data'] = { labels: [], datasets: [] };
   topWicketTakersChart: ChartConfiguration<'bar'>['data'] = { labels: [], datasets: [] };
   topStrikeRateChart: ChartConfiguration<'bar'>['data'] = { labels: [], datasets: [] };
+
+  chartOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    plugins: {
+      tooltip: {
+        enabled: true
+      },
+      legend: {
+        display: true,
+        position: 'bottom'
+      }
+    },
+    animation: {
+      duration: 1000,
+      easing: 'easeOutQuart'
+    },
+    scales: {
+      x: {
+        ticks: {
+          autoSkip: false,
+          maxRotation: 45,
+          minRotation: 0
+        }
+      },
+      y: {
+        beginAtZero: true
+      }
+    }
+  };
 
   ngOnChanges() {
     if (this.players?.length) {

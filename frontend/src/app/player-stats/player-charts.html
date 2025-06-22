@@ -1,20 +1,31 @@
-<div *ngIf="players?.length; else noData" class="chart-wrapper">
+<div class="chart-wrapper">
   <div class="chart-box">
-    <h3>Top 5 Run Scorers</h3>
-    <canvas baseChart [data]="topRunScorersChart" [type]="'bar'"></canvas>
+    <h4>Top Run Scorers</h4>
+    <canvas
+      baseChart
+      [data]="topRunScorersChart"
+      [options]="chartOptions"
+      chartType="bar">
+    </canvas>
   </div>
 
   <div class="chart-box">
-    <h3>Top 5 Wicket Takers</h3>
-    <canvas baseChart [data]="topWicketTakersChart" [type]="'bar'"></canvas>
+    <h4>Top Wicket Takers</h4>
+    <canvas
+      baseChart
+      [data]="topWicketTakersChart"
+      [options]="chartOptions"
+      chartType="bar">
+    </canvas>
   </div>
 
   <div class="chart-box">
-    <h3>Top 5 by Strike Rate</h3>
-    <canvas baseChart [data]="topStrikeRateChart" [type]="'bar'"></canvas>
+    <h4>Top Strike Rate</h4>
+    <canvas
+      baseChart
+      [data]="topStrikeRateChart"
+      [options]="chartOptions"
+      chartType="bar">
+    </canvas>
   </div>
 </div>
-
-<ng-template #noData>
-  <p class="no-data">No chart data available.</p>
-</ng-template>
