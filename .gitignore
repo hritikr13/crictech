@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Angular build output
+dist/
+.angular/
+
+# Java and Maven build output
+target/
+
+# IDE files
+.idea/
+*.iml
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+application-local.properties
+
+# Logs and operating system files
+*.log
+.DS_Store
+Thumbs.db

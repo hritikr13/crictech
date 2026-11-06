@@ -1,31 +1,77 @@
 <div class="chart-wrapper">
+
+  <!-- Top Run Scorers -->
   <div class="chart-box">
-    <h4>Top Run Scorers</h4>
-    <canvas
-      baseChart
-      [data]="topRunScorersChart"
-      [options]="chartOptions"
-      chartType="bar">
-    </canvas>
+    <div class="chart-heading">
+      <h4>Top Run Scorers</h4>
+      <p>Total runs across selected teams and seasons</p>
+    </div>
+
+    <ng-container *ngIf="topRunScorersChart.labels?.length; else noRuns">
+      <canvas
+        baseChart
+        [data]="topRunScorersChart"
+        [options]="chartOptions"
+        chartType="bar">
+      </canvas>
+    </ng-container>
+
+    <ng-template #noRuns>
+      <div class="no-data">
+        No batting records available for this selection.
+      </div>
+    </ng-template>
   </div>
 
+  <!-- Top Wicket Takers -->
   <div class="chart-box">
-    <h4>Top Wicket Takers</h4>
-    <canvas
-      baseChart
-      [data]="topWicketTakersChart"
-      [options]="chartOptions"
-      chartType="bar">
-    </canvas>
+    <div class="chart-heading">
+      <h4>Top Wicket Takers</h4>
+      <p>Total wickets across selected teams and seasons</p>
+    </div>
+
+    <ng-container *ngIf="topWicketTakersChart.labels?.length; else noWickets">
+      <canvas
+        baseChart
+        [data]="topWicketTakersChart"
+        [options]="chartOptions"
+        chartType="bar">
+      </canvas>
+    </ng-container>
+
+    <ng-template #noWickets>
+      <div class="no-data">
+        No bowling records available for this selection.
+      </div>
+    </ng-template>
   </div>
 
+  <!-- Approximate Strike Rates -->
   <div class="chart-box">
-    <h4>Top Strike Rate</h4>
-    <canvas
-      baseChart
-      [data]="topStrikeRateChart"
-      [options]="chartOptions"
-      chartType="bar">
-    </canvas>
+    <div class="chart-heading">
+      <h4>Top Strike Rates</h4>
+      <p>Approximate run-weighted strike rate</p>
+    </div>
+
+    <ng-container *ngIf="topStrikeRateChart.labels?.length; else noStrikeRate">
+      <canvas
+        baseChart
+        [data]="topStrikeRateChart"
+        [options]="chartOptions"
+        chartType="bar">
+      </canvas>
+    </ng-container>
+
+    <ng-template #noStrikeRate>
+      <div class="no-data">
+        No valid strike-rate records available for this selection.
+      </div>
+    </ng-template>
+
+    <div class="chart-note">
+      Note: Strike rate is an approximation because total balls faced
+      are not available in the current dataset.
+    </div>
   </div>
+
 </div>

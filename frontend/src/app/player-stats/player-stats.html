@@ -1,100 +1,313 @@
-<!-- player-stats.html -->
 
-<!-- Navbar -->
 <header class="navbar">
-  <div class="brand" (click)="goHome()">
+  <div
+    class="brand"
+    (click)="goHome()"
+    role="button"
+    tabindex="0"
+    (keydown.enter)="goHome()"
+  >
     <span class="brand-name">CricTech Analytics</span>
+  </div>
+
+  <div class="navbar-status">
+    <span class="status-indicator"></span>
+    IPL Analytics
   </div>
 </header>
 
-<!-- Layout -->
 <div class="stats-layout">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <h3>Teams</h3>
-    <ul>
-      <li
-        *ngFor="let team of teams"
-        [class.active]="selectedTeam === team"
-        (click)="selectTeam(team)"
-      >
-        {{ team }}
-      </li>
-      <li [class.active]="!selectedTeam" (click)="selectTeam('')">All Teams</li>
-    </ul>
 
-    <h3>Seasons</h3>
-    <ul>
-      <li
-        *ngFor="let year of seasons"
-        [class.active]="selectedSeason === year"
-        (click)="selectSeason(year)"
-      >
-        {{ year }}
-      </li>
-      <li [class.active]="selectedSeason === null" (click)="selectSeason(null)">
-        All Seasons
-      </li>
-    </ul>
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <h3>Teams</h3>
+
+      <ul>
+        <li
+          *ngFor="let team of teams"
+          [class.active]="selectedTeam === team"
+          (click)="selectTeam(team)"
+          tabindex="0"
+          (keydown.enter)="selectTeam(team)"
+        >
+          {{ team }}
+        </li>
+
+        <li
+          [class.active]="!selectedTeam"
+          (click)="selectTeam('')"
+          tabindex="0"
+          (keydown.enter)="selectTeam('')"
+        >
+          All Teams
+        </li>
+      </ul>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>Seasons</h3>
+
+      <ul>
+        <li
+          *ngFor="let year of seasons"
+          [class.active]="selectedSeason === year"
+          (click)="selectSeason(year)"
+          tabindex="0"
+          (keydown.enter)="selectSeason(year)"
+        >
+          {{ year }}
+        </li>
+
+        <li
+          [class.active]="selectedSeason === null"
+          (click)="selectSeason(null)"
+          tabindex="0"
+          (keydown.enter)="selectSeason(null)"
+        >
+          All Seasons
+        </li>
+      </ul>
+    </div>
   </aside>
 
-  <!-- Main Content -->
-  <section class="main-content">
-    <h2>🏏 Player Stats Dashboard</h2>
+  <main class="main-content">
 
-    <div class="filters-bar">
-      <input
-        type="text"
-        [(ngModel)]="searchText"
-        (ngModelChange)="onSearchChange()"
-        placeholder="Search player name..."
-        class="search-input"
-      />
-      <button class="clear-button" (click)="clearFilters()">
+    <section class="dashboard-heading">
+      <div>
+        <p class="eyebrow">CRICKET DATA PLATFORM</p>
+        <h1>Player Statistics</h1>
+        <p class="dashboard-description">
+          Explore IPL player performance across teams and seasons.
+        </p>
+      </div>
+
+      <div class="record-count" *ngIf="!isLoading && !errorMessage">
+        <span class="record-count-value">
+          {{ totalElements | number }}
+        </span>
+        <span class="record-count-label">Total matching records</span>
+      </div>
+    </section>
+
+    <section class="filters-bar">
+
+      <div class="search-container">
+  <label for="player-search">Player search</label>
+
+  <input
+    id="player-search"
+    type="search"
+    [(ngModel)]="searchText"
+    (ngModelChange)="onSearchChange()"
+    placeholder="Search players (e.g. Virat Kohli)..."
+    class="search-input"
+    autocomplete="off"
+  />
+</div>
+
+      <div class="active-filters">
+        <span class="filter-label">Team:</span>
+        <strong>{{ selectedTeam || 'All Teams' }}</strong>
+
+        <span class="filter-divider">|</span>
+
+        <span class="filter-label">Season:</span>
+        <strong>{{ selectedSeason || 'All Seasons' }}</strong>
+      </div>
+
+      <button
+        type="button"
+        class="clear-button"
+        (click)="clearFilters()"
+      >
         Clear Filters
       </button>
-    </div>
 
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Player</th>
-            <th>Team</th>
-            <th (click)="toggleSort('season')">
-              Season
-              <span *ngIf="sortField === 'season'"
-                >{{ sortDirection === 'asc' ? '▲' : '▼' }}</span
-              >
-            </th>
-            <th (click)="toggleSort('runs')">
-              Runs
-              <span *ngIf="sortField === 'runs'"
-                >{{ sortDirection === 'asc' ? '▲' : '▼' }}</span
-              >
-            </th>
-            <th (click)="toggleSort('wickets')">
-              Wickets
-              <span *ngIf="sortField === 'wickets'"
-                >{{ sortDirection === 'asc' ? '▲' : '▼' }}</span
-              >
-            </th>
-            <th>Strike Rate</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let player of players">
-            <td>{{ player.player }}</td>
-            <td>{{ player.team }}</td>
-            <td>{{ player.season }}</td>
-            <td>{{ player.runs }}</td>
-            <td>{{ player.wickets }}</td>
-            <td>{{ player.strikeRate }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    </section>
 
-    <app-player-charts [players]="players"></app-player-charts>
-  </section>
+    <section class="data-section">
+
+      <div class="section-heading">
+        <div>
+          <h2>Player Performance</h2>
+          <p>Season-wise batting and bowling statistics</p>
+        </div>
+      </div>
+
+      <div class="loading-state" *ngIf="isLoading">
+        <div class="loading-spinner"></div>
+        <p>Loading player statistics...</p>
+      </div>
+
+      <div class="error-state" *ngIf="!isLoading && errorMessage">
+        <h3>Unable to load player data</h3>
+        <p>{{ errorMessage }}</p>
+
+        <button type="button" (click)="loadPlayers()">
+          Retry
+        </button>
+      </div>
+
+      <div
+        class="empty-state"
+        *ngIf="!isLoading && !errorMessage && players.length === 0"
+      >
+        <h3>No players found</h3>
+        <p>
+          No records match your current filters.
+          Try changing your selection.
+        </p>
+
+        <button
+          type="button"
+          class="clear-button"
+          (click)="clearFilters()"
+        >
+          Reset Filters
+        </button>
+      </div>
+
+      <ng-container
+        *ngIf="!isLoading && !errorMessage && players.length > 0"
+      >
+
+        <div class="table-wrapper">
+
+          <table>
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Team</th>
+
+                <th
+                  class="sortable"
+                  (click)="toggleSort('season')"
+                >
+                  Season
+                  <span *ngIf="sortField === 'season'">
+                    {{ sortDirection === 'asc' ? '▲' : '▼' }}
+                  </span>
+                </th>
+
+                <th
+                  class="sortable"
+                  (click)="toggleSort('runs')"
+                >
+                  Runs
+                  <span *ngIf="sortField === 'runs'">
+                    {{ sortDirection === 'asc' ? '▲' : '▼' }}
+                  </span>
+                </th>
+
+                <th
+                  class="sortable"
+                  (click)="toggleSort('wickets')"
+                >
+                  Wickets
+                  <span *ngIf="sortField === 'wickets'">
+                    {{ sortDirection === 'asc' ? '▲' : '▼' }}
+                  </span>
+                </th>
+
+                <th>Strike Rate</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let player of players">
+                <td class="player-name">
+                  {{ player.player || 'Unknown Player' }}
+                </td>
+
+                <td>{{ player.team || 'Unknown Team' }}</td>
+                <td>{{ player.season }}</td>
+                <td>{{ player.runs }}</td>
+                <td>{{ player.wickets }}</td>
+                <td>{{ player.strikeRate | number:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+
+        <div class="pagination-container">
+
+          <div class="pagination-info">
+            Showing
+            <strong>{{ pageStart }}</strong>
+            –
+            <strong>{{ pageEnd }}</strong>
+            of
+            <strong>{{ totalElements | number }}</strong>
+            records
+          </div>
+
+          <div class="pagination-controls">
+
+            <button
+              type="button"
+              class="pagination-button"
+              [disabled]="currentPage === 0 || isLoading"
+              (click)="previousPage()"
+            >
+              Previous
+            </button>
+
+            <button
+              *ngFor="let page of visiblePages"
+              type="button"
+              class="pagination-button page-number"
+              [class.active]="currentPage === page"
+              [disabled]="isLoading"
+              (click)="goToPage(page)"
+            >
+              {{ page + 1 }}
+            </button>
+
+            <button
+              type="button"
+              class="pagination-button"
+              [disabled]="currentPage >= totalPages - 1 || isLoading"
+              (click)="nextPage()"
+            >
+              Next
+            </button>
+
+          </div>
+
+          <div class="page-size-control">
+            <label for="page-size">Rows:</label>
+
+            <select
+              id="page-size"
+              [ngModel]="pageSize"
+              (ngModelChange)="pageSize = $event; currentPage = 0; loadPlayers()"
+            >
+              <option [ngValue]="10">10</option>
+              <option [ngValue]="20">20</option>
+              <option [ngValue]="50">50</option>
+              <option [ngValue]="100">100</option>
+            </select>
+          </div>
+
+        </div>
+
+      </ng-container>
+
+    </section>
+
+    <section class="charts-section" *ngIf="!errorMessage">
+      <div class="section-heading">
+        <div>
+          <h2>Performance Analytics</h2>
+          <p>Visual breakdown of the available player dataset</p>
+        </div>
+      </div>
+
+      <app-player-charts
+        [players]="chartPlayers"
+      ></app-player-charts>
+    </section>
+
+  </main>
 </div>
